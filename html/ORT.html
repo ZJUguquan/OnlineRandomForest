@@ -85,7 +85,7 @@ You can generate it via <code>OnlineRandomForest::dataRange()</code> for conveni
 
 <dl>
 <dt><code>findLeaf(x, tree, depth = 0)</code></dt><dd>
-<p>Find the leaf node where x is located. Return a list of node and its depth.
+<p>Find the leaf node where x is located. Return a list, including node and its depth.
 </p>
 
 <ul>
@@ -131,8 +131,8 @@ You can generate it via <code>OnlineRandomForest::dataRange()</code> for conveni
 <li><p> node.ind - The index of the current node in Tree. Default <code>1</code> for the root node. For most purposes, don't need to change it.
 </p>
 </li>
-<li><p> df.node - The training data frame used when constructing random forest,
-i.e., the <strong>data</strong> argument in <code>randomForest::randomForest()</code> function.
+<li><p> df.node - The training data frame which has been used to contruct random forest.,
+i.e., the <strong>data</strong> argument in <code>randomForest</code> function.
 </p>
 </li></ul>
 

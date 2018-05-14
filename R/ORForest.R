@@ -1,0 +1,241 @@
+
+# ORF ------------------------
+
+#' @title Create a Online Random Forest Object 
+#' @description ORF is a class of R6.
+#' You can use it to create a **random forest** via diffrent ways, which supports incremental learning as well as batch learning.
+#' As a matter of fact, the Online Random Forest is made of a list of \code{\link[=ORT]{Online Random Trees}}.
+#' @author Quan Gu
+#' 
+#' @usage ORF$new(param, numTrees = 100)
+#' @param param A list which usually has names of \code{minSamples, minGain, numClasses, x.rng, etc.}. 
+#' More details show in \code{\link[=ORT]{Online Random Tree}}.
+#' @param numTrees A nonnegative integer indicates how many ORT trees are going to build.
+#' 
+#' @details Online Random Forest was first introduced by \href{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.150.1671&rep=rep1&type=pdf}{Amir Saffari, etc}. 
+#' After that, \href{https://github.com/luiarthur/ORFpy}{Arthur Lui} has implemented the algorithm using Python.
+#' Following the paper's advice and Lui's implemention, I refactor the code via R and R6 package. In additon,
+#' the implemention of ORF in this package support both incremental learning and batch learning by combining with \code{\link[randomForest]{randomForest}}.
+#' For usage, see details in description of each field or method.
+#' @return Object of \code{\link{R6Class}}, Object of \code{Online Random Forest}.
+#' @format \code{\link{R6Class}} object. 
+#' 
+#' @import R6 randomForest
+#' @export
+#' 
+#' @examples
+#' # regression example
+#' if(!require(ggplot2)) install.packages("ggplot2")
+#' data("diamonds", package = "ggplot2")
+#' dat <- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
+#' for (col in c("cut","color","clarity")) dat[[col]] <- as.integer(dat[[col]])
+#' x.rng <- data.frame(min = apply(dat[1:9], 2, min),
+#'                     max = apply(dat[1:9], 2, max),
+#'                     row.names = paste0("X", 1:9))
+#' param <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng)
+#' ind.gen <- sample(1:1000, 800)
+#' ind.updt <- sample(setdiff(1:1000, ind.gen), 100)
+#' ind.test <- setdiff(setdiff(1:1000, ind.gen), ind.updt)
+#' rf <- randomForest(price ~ ., data = dat[ind.gen, ], maxnodes = 20, ntree = 100)
+#' orf <- ORF$new(param)
+#' orf$generateForest(rf, df.train = dat[ind.gen, ], y.col = "price")
+#' orf$meanTreeSize()
+#' for (i in ind.updt) {
+#'   orf$update(dat[i, 1:9], dat[i, 10])
+#' }
+#' orf$meanTreeSize()
+#' 
+#' if(!require(Metrics)) install.packages("Metrics")
+#' preds <- orf$predicts(dat[ind.test, 1:9])
+#' Metrics::rmse(preds, dat$price[ind.test])
+#' preds.rf <- predict(rf, newdata = dat[ind.test,])
+#' Metrics::rmse(preds.rf, dat$price[ind.test]) # make progress
+#' 
+#' # classification example
+#' # Just help yourself, boy !
+#'
+#' @section Fields:
+#' \describe{
+#'   \item{\code{numClasses}}{A nonnegative integer indicates how many classes when solve a classifation problem. Default 0 for regression. If numClasses > 0, then do classifation.}
+#'   \item{\code{classify}}{TRUE for classification and FALSE for Regression, depending on the value of \code{numClasses}.}
+#'   \item{\code{forest}}{A list of ORT trees. More details show in \code{\link[=ORT]{Online Random Tree}}.}
+#' }
+#'
+#' @section Methods:
+#' \describe{
+#'   \item{\code{update(x, y)}}{
+#'     When a sample comes in, update all ORT trees in forest with the sample's x variables and y value. \cr
+#'     \itemize{
+#'       \item x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+#'       \item y - The y value of a sample.
+#'     }
+#'   }
+#'   \item{\code{generateForest(rf, df.train, y.col)}}{
+#'     Generate a list of ORT trees, call function \code{\link[=ORT]{ORT$generateTree()}} inside.\cr
+#'     \itemize{
+#'       \item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named **node.ind**. See **Examples**. \cr
+#'       \item df.train -  The training data frame which has been used to contruct randomForest,
+#'        i.e., the **data** argument in \code{\link[randomForest]{randomForest}} function.
+#'     }
+#'   }
+#'   \item{\code{predict(x)}}{
+#'     Predict the corresponding y value of x, using all ORT trees.
+#'     \itemize{
+#'       \item x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+#'     }
+#'   }
+#'   \item{\code{predicts(X)}}{
+#'     Predict the corresponding y value of x, using all ORT trees.
+#'     \itemize{
+#'       \item X - A matrix or a data frame corresponding to a batch of samples' x variables. 
+#'     }
+#'   }
+#'   \item{\code{confusionMatrix(X, y, pretty = FALSE)}}{
+#'     Get a confusion matrix about predicted y values and true y values. Only for classification problem.
+#'     \itemize{
+#'       \item X - A matrix or a data frame corresponding to a batch of samples' x variables. 
+#'       \item y - A vector of y values corresponding to a batch of samples.
+#'       \item pretty - If TRUE, print a pretty confusion matrix (need \code{gmodels} package). Default FALSE.
+#'     }
+#'   }
+#'   \item{\code{meanTreeSize()}}{Mean size of ORT trees in the forest.}
+#'   \item{\code{meanNumLeaves()}}{Mean leaf nodes numbers of ORT trees in the forest.}
+#'   \item{\code{meanTreeDepth()}}{Mean depth of ORT trees in the forest.}
+#'   \item{\code{sdTreeSize()}}{Standard deviation for size of ORT trees in the forest.}
+#'   \item{\code{sdTreeSize()}}{Standard deviation for leaf nodes numbers of ORT trees in the forest.}
+#'   \item{\code{sdTreeSize()}}{Standard deviation for depth of ORT trees in the forest.}
+#' }
+
+ORF <- R6Class(
+  classname = "Online Random Forest",
+  public = list(
+    param = NULL, numClasses = NULL, classify = NULL,
+    numTrees = NULL, forest = NULL, # ncores = NULL,
+    initialize = function(param, numTrees = 100) {
+      self$param <- param
+      self$numClasses <- ifelse("numClasses" %in% names(param), param[["numClasses"]], 0)
+      self$classify <- self$numClasses > 0
+      self$numTrees <- numTrees
+      self$forest <- replicate(self$numTrees, ORT$new(param), simplify = F)
+    },
+    update = function(x, y) {
+      # stopifnot(is.numeric(y))
+      ncores = 0
+      if (ncores <= 1) {
+        invisible(lapply(self$forest, function(ort) ort$update(x, y)))
+      } else {
+        # TODO
+        library(parallel)
+        ncores <- min(ncores, detectCores())
+        cluster <- makePSOCKcluster(ncores)
+        on.exit(stopCluster(cluster))
+        clusterExport(cluster, c("Tree","Elem","Test","SuffStats","ORT","ORF"))
+        clusterExport(cluster, c("x","y"), envir = environment())
+        self$forest <- parLapply(cluster, self$forest, function(ort){
+          ort$update(x, y)
+          ort
+        })
+      }
+    },
+    generateForest = function(rf, df.train, y.col) {
+      # df.train: the training data.frame which was used to contruct rf
+      if (!requireNamespace("randomForest", quietly = T))
+        stop("You need install.packages('randomForest') first.")
+      if (!identical(y.col, names(df.train)[ncol(df.train)]))
+        stop("y.col must be the last column of df.train !")
+      if (!("randomForest" %in% class(rf)))
+        stop("rf must be an object constructed by `randomForest::randomForest()` !")
+      if (rf$forest$ntree != self$numTrees)
+        return("The `ntree` parameter in `randomForest::randomForest()` must equal to self$numTrees !")
+      ncore = 0
+      if (ncore <= 1) {
+        invisible(lapply(seq_len(self$numTrees), function(i) {
+          tree.mat <- randomForest::getTree(rf, i, labelVar = F)
+          tree.mat <- cbind(tree.mat, node.ind = 1:nrow(tree.mat))
+          self$forest[[i]]$generateTree(tree.mat, df.node = df.train)
+        }))
+      } else {
+        # TODO
+        library(parallel)
+        ncores <- 4 #min(ncores, detectCores())
+        cluster <- makePSOCKcluster(ncores)
+        on.exit(stopCluster(cluster))
+        clusterExport(cluster, c("Tree","Elem","Test","SuffStats","ORT","ORF"))
+        clusterExport(cluster, c("rf","df.train"), envir = environment())
+        self$forest <- parLapply(cluster, seq_len(self$numTrees), function(i){
+          tree.mat <- randomForest::getTree(rf, i, labelVar = F)
+          tree.mat <- cbind(tree.mat, node.ind = 1:nrow(tree.mat))
+          ort <- self$forest[[i]]
+          ort$generateTree(tree.mat, df.node = df.train)
+          ort
+        })
+      }
+    },
+    predict = function(x) {
+      preds <- unlist(sapply(self$forest, function(ort) ort$predict(x), USE.NAMES = F))
+      if (self$classify) {
+        pred.counts <- table(preds)
+        return(as.integer(names(pred.counts)[which.max(pred.counts)]))
+      } else {
+        return(mean(preds))
+      }
+    },
+    predicts = function(X) {
+      stopifnot(is.matrix(X) | is.data.frame(X))
+      apply(X, 1, self$predict)
+    },
+    predStat = function() { "TODO Later" },
+    meanTreeSize = function() {
+      mean(sapply(self$forest, function(ort) ort$size()))
+    },
+    meanNumLeaves = function() {
+      mean(sapply(self$forest, function(ort) ort$numLeaves()))
+    },
+    meanTreeDepth = function() {
+      mean(sapply(self$forest, function(ort) ort$depth()))
+    },
+    sdTreeSize = function() {
+      sd(sapply(self$forest, function(ort) ort$size()))
+    },
+    sdNumLeaves = function() {
+      sd(sapply(self$forest, function(ort) ort$numLeaves()))
+    },
+    sdTreeDepth = function() {
+      sd(sapply(self$forest, function(ort) ort$depth()))
+    },
+    confusionMatrix = function(X, y, pretty = FALSE) {
+      stopifnot(is.matrix(X) | is.data.frame(X))
+      if (!self$classify)
+        return("Confusion matrices can only be obtained for classification problem.")
+      preds <- self$predicts(X)
+      if (!pretty) {
+        return(table(pred = preds, y = y))
+      } else {
+        if (!requireNamespace("gmodels", quietly = T)) {
+          return("You need install.packages('gmodels') first.")
+        } else {
+          return(
+            gmodels::CrossTable(preds, y, prop.chisq = FALSE, prop.t = FALSE,
+                                dnn = c('prediction', 'actual'))
+          )
+        }
+      }
+    }
+  )
+)
+
+
+
+
+
+
+
+# ------------
+
+# TODO list
+# 1. node.counts
+# 2. OOBE, rpart to ORT
+# 3. parallel
+# 
+# 
+# 
