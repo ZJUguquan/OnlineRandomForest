@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: dataRange function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for dataRange"><tr><td>dataRange</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>dataRange function</h2>
+
+<h3>Description</h3>
+
+<p>Return the range of X for each variable.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+dataRange(X)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>X</code></td>
+<td>
+<p>A matrix or a data frame of training data <strong>without</strong> y column.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Return the range of X for each variable, which is a part of <code>param</code>. Can be used for passing <code>param</code> to <code>Elem, ORT or ORF</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A data frame with two columns <code>min max</code> contains the range of each x variable.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Quan Gu
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+dataRange(iris[, 1:4])
+dataRange(mtcars)
+</pre>
+
+
+</body></html>

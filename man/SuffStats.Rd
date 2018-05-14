@@ -12,7 +12,7 @@ SuffStats$new(numClasses = 0)
 \item{numClasses}{A nonnegative integer indicates how many classes when solve a classifation problem. Default 0 for regression. If numClasses > 0, then do classifation.}
 }
 \value{
-Object of \code{\link{R6Class}}, Object of SuffStats.
+Object of \code{\link{R6Class}}, Object of \code{SuffStats}.
 }
 \description{
 SuffStats is a class of R6. It has provide some important statistics(fields or functions) inside the element of every (leaf) node in an ORT object.
@@ -23,11 +23,11 @@ Note that SuffStats may only be seen in leaf nodes of an ORT tree. See details i
 \section{Fields}{
 
 \describe{
-\item{\code{(node.n)}}{Number of samples under current node. Default 0.}
-\item{\code{(classify)}}{TRUE for classification and FALSE for Regression.}
-\item{\code{(node.counts)}}{If classification, counts of each y value in current node.}
-\item{\code{(node.sum)}}{Sum of the y value in current node.}
-\item{\code{(node.square.sum)}}{Sum of the y's square in current node.}
+\item{\code{node.n}}{Number of samples under current node. Default 0.}
+\item{\code{classify}}{TRUE for classification and FALSE for Regression.}
+\item{\code{node.counts}}{If classification, counts of each y value in current node.}
+\item{\code{node.sum}}{Sum of the y value in current node.}
+\item{\code{node.square.sum}}{Sum of the y's square in current node.}
 }
 }
 
@@ -42,7 +42,7 @@ When a sample comes in current node, update ORT with the sample's y value. \cr
 }
 \item{\code{reset()}}{Reset all fields to NULL. Currently not used.}
 \item{\code{isLeaf()}}{TRUE if current node is a leaf node otherwise FALSE.}
-\item{\code{pred()}}{Return the prediction of current leaf node. Will be an \strong{integer} for classification or an \strong{numeric} for regression.}
+\item{\code{pred()}}{Return the prediction of current leaf node. Will return an \strong{integer} for classification or an \strong{numeric} for regression.}
 \item{\code{impurity()}}{Return the impurity of current node. Computed via information entropy.}
 }
 }

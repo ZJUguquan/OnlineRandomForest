@@ -1,15 +1,15 @@
 Package: OnlineRandomForest
 Type: Package
-Title: A Text Mining Toolkit for Chinese Document
+Title: The implemention of Online Random Forest. 
 Version: 0.8
 Date: 2018-05-13
 Author: Quan Gu
 Maintainer: Quan Gu <guquan92@zju.edu.cn>
-Description: The CTM package is designed to solve problems of text mining and is specific for Chinese document.
+Description: The implemention of Online Random Forest. <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.150.1671&rep=rep1&type=pdf>
 License: GPL-3
 LazyData: TRUE
 RoxygenNote: 6.0.1
-Imports: jiebaR
+Imports: R6
 NeedsCompilation: no
 Packaged: 2018-05-13 10:54:51 UTC; Quan Gu
 Repository: CRAN

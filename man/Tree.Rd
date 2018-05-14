@@ -18,10 +18,10 @@ Tree$new(elem = NULL, left = NULL, right = NULL, node.ind = 1)
 \item{node.ind}{The index of the current node in Tree. Default \code{1} for the root node.}
 }
 \value{
-Object of \code{\link{R6Class}}, Object of Tree.
+Object of \code{\link{R6Class}}, Object of \code{Tree}.
 }
 \description{
-Tree is a class of R6. You can use it to create a binary tree via many ways.
+Tree is a class of R6. You can use it to create a binary tree via diffrent ways.
 }
 \details{
 See details in description of each field or method.

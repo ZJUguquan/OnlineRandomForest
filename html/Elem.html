@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Create a Node Element Object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Elem"><tr><td>Elem</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Create a Node Element Object</h2>
+
+<h3>Description</h3>
+
+<p>Elem is a class of R6. It is the element of a node in a Tree or ORT object, storing some important information of the node/Tree.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Elem$new(param, splitInd = -1, splitVal = 0, numSamplesSeen = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>param</code></td>
+<td>
+<p>A list which usually has names of <code>minSamples, minGain, numClasses, x.rng, etc.</code></p>
+</td></tr>
+<tr valign="top"><td><code>splitInd</code></td>
+<td>
+<p>A integer indicates which x variable is used to split on current node. Default NULL.</p>
+</td></tr>
+<tr valign="top"><td><code>splitVal</code></td>
+<td>
+<p>A numeric indicates what value of the chosen x variable is used to split on current node. Means: <code>x[splitInd] &lt; splitVal</code>. Default NULL.</p>
+</td></tr>
+<tr valign="top"><td><code>numSamplesSeen</code></td>
+<td>
+<p>A integer indicates how many samples have come in current node for updating the ORT tree. Default 0.</p>
+</td></tr>
+</table>
+
+
+<h3>Format</h3>
+
+<p><code>R6Class</code> object.</p>
+
+
+<h3>Details</h3>
+
+<p>See details in description of each field or method.
+</p>
+
+
+<h3>Value</h3>
+
+<p>Object of <code>R6Class</code>, Object of <code>Tree Element</code>.
+</p>
+
+
+<h3>Fields</h3>
+
+
+<dl>
+<dt><code>x.rng</code></dt><dd>
+<p>A data frame which indicates the range of every x variable in training data.
+It must be a shape of <code>n*2</code> which n is the number of x variables, i.e. <code>x.dim</code>.
+And the first collumn must be the minimal values of x and the second as maximum.
+You can generate it via <code>OnlineRandomForest::dataRange()</code> for convenience.
+</p>
+</dd>
+<dt><code>x.dim</code></dt><dd><p>Number of x variables.</p>
+</dd>
+<dt><code>tests</code></dt><dd><p>A list of <code>SuffStats</code>. Candicate splits of current node.</p>
+</dd>
+<dt><code>numTests</code></dt><dd><p>A part of <code>param</code> indicates the number of <code>SuffStats</code> in tests</p>
+</dd>
+<dt><code>stats</code></dt><dd><p>A <code>SuffStats</code> object. The real splits of current node.</p>
+</dd>
+</dl>
+
+
+
+<h3>Methods</h3>
+
+
+<dl>
+<dt><code>toString()</code></dt><dd><p>Print elem itself or the split of condition on current node.</p>
+</dd>
+<dt><code>pred()</code></dt><dd><p>Return the prediction of current leaf node. Will return an <strong>integer</strong> for classification or an <strong>numeric</strong> for regression.</p>
+</dd>
+<dt><code>update(x, y)</code></dt><dd>
+<p>When a sample comes in current node, update ORT with the sample's x variables and y value. <br />
+</p>
+
+<ul>
+<li><p> x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+</p>
+</li>
+<li><p> y - The y value of a sample.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>updateSplit(xvar.index, xvar.value)</code></dt><dd>
+<p>Replace the fields <strong>splitInd</strong> and <strong>splitVal</strong> of current node with xvar.index and xvar.value.
+</p>
+</dd>
+<dt>...</dt><dd><p>Other functions.</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Quan Gu
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x.rng &lt;- data.frame(min = c(1,3,5,7), max = c(2,4,6,8), row.names = paste0("x",1:4))
+param &lt;- list('minSamples'= 5, 'minGain'= 0.1, 'numClasses'= 3, 'x.rng'= x.rng)
+elm &lt;- Elem$new(param)
+length(elm$tests)
+elm$tests[c(1,8)]
+elm$updateSplit(3, 5.2)
+elm$toString()
+elm$update(c(1.1, 3.2, 5.3, 7.4), 1)
+
+</pre>
+
+
+</body></html>

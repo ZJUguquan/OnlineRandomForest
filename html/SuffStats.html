@@ -43,7 +43,7 @@ SuffStats$new(numClasses = 0)
 
 <h3>Value</h3>
 
-<p>Object of <code>R6Class</code>, Object of SuffStats.
+<p>Object of <code>R6Class</code>, Object of <code>SuffStats</code>.
 </p>
 
 
@@ -51,15 +51,15 @@ SuffStats$new(numClasses = 0)
 
 
 <dl>
-<dt><code>(node.n)</code></dt><dd><p>Number of samples under current node. Default 0.</p>
+<dt><code>node.n</code></dt><dd><p>Number of samples under current node. Default 0.</p>
 </dd>
-<dt><code>(classify)</code></dt><dd><p>TRUE for classification and FALSE for Regression.</p>
+<dt><code>classify</code></dt><dd><p>TRUE for classification and FALSE for Regression.</p>
 </dd>
-<dt><code>(node.counts)</code></dt><dd><p>If classification, counts of each y value in current node.</p>
+<dt><code>node.counts</code></dt><dd><p>If classification, counts of each y value in current node.</p>
 </dd>
-<dt><code>(node.sum)</code></dt><dd><p>Sum of the y value in current node.</p>
+<dt><code>node.sum</code></dt><dd><p>Sum of the y value in current node.</p>
 </dd>
-<dt><code>(node.square.sum)</code></dt><dd><p>Sum of the y's square in current node.</p>
+<dt><code>node.square.sum</code></dt><dd><p>Sum of the y's square in current node.</p>
 </dd>
 </dl>
 
@@ -83,7 +83,7 @@ SuffStats$new(numClasses = 0)
 </dd>
 <dt><code>isLeaf()</code></dt><dd><p>TRUE if current node is a leaf node otherwise FALSE.</p>
 </dd>
-<dt><code>pred()</code></dt><dd><p>Return the prediction of current leaf node. Will be an <strong>integer</strong> for classification or an <strong>numeric</strong> for regression.</p>
+<dt><code>pred()</code></dt><dd><p>Return the prediction of current leaf node. Will return an <strong>integer</strong> for classification or an <strong>numeric</strong> for regression.</p>
 </dd>
 <dt><code>impurity()</code></dt><dd><p>Return the impurity of current node. Computed via information entropy.</p>
 </dd>

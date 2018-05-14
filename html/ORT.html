@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Create a Online Random Tree Object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for ORT"><tr><td>ORT</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Create a Online Random Tree Object</h2>
+
+<h3>Description</h3>
+
+<p>ORT is a class of R6 and it inherits the <code>Tree</code> class.
+You can use it to create a <strong>decision tree</strong> via diffrent ways, which supports incremental learning as well as batch learning.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ORT$new(param)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>param</code></td>
+<td>
+<p>A list which usually has names of <code>minSamples, minGain, numClasses, x.rng, etc.</code>.
+More details show in <strong>Fields</strong>.</p>
+</td></tr>
+</table>
+
+
+<h3>Format</h3>
+
+<p><code>R6Class</code> object.</p>
+
+
+<h3>Details</h3>
+
+<p>See details in description of each field or method.
+</p>
+
+
+<h3>Value</h3>
+
+<p>Object of <code>R6Class</code>, Object of <code>Online Random Tree</code>.
+</p>
+
+
+<h3>Fields</h3>
+
+
+<dl>
+<dt><code>age</code></dt><dd><p>How many times has the loop go through inside the <code>update()</code> function.</p>
+</dd>
+<dt><code>minSamples</code></dt><dd><p>A part of <code>param</code> indicates the minimal samples in a leaf node</p>
+</dd>
+<dt><code>minGain</code></dt><dd><p>A part of <code>param</code> indicates minimal entropy gain when split a node.</p>
+</dd>
+<dt><code>numTests</code></dt><dd><p>A part of <code>param</code> indicates the number of <code>SuffStats</code> in tests. Default 10 if not set.</p>
+</dd>
+<dt><code>maxDepth</code></dt><dd><p>A part of <code>param</code> indicates max depth of an ORT tree. Default 10 if not set.</p>
+</dd>
+<dt><code>numClasses</code></dt><dd><p>A nonnegative integer indicates how many classes when solve a classifation problem. Default 0 for regression. If numClasses &gt; 0, then do classifation.</p>
+</dd>
+<dt><code>classValues</code></dt><dd><p>All diffrent possible values of y if classification. Default NULL if not set.</p>
+</dd>
+<dt><code>x.rng</code></dt><dd>
+<p>A data frame which indicates the range of every x variable in training data.
+It must be a shape of <code>n*2</code> which n is the number of x variables, i.e. <code>x.dim</code>.
+And the first collumn must be the minimal values of x and the second as maximum.
+You can generate it via <code>OnlineRandomForest::dataRange()</code> for convenience.
+</p>
+</dd>
+<dt><code>...</code></dt><dd><p>Other fields can be seen in <code>Tree</code>.</p>
+</dd>
+</dl>
+
+
+
+<h3>Methods</h3>
+
+
+<dl>
+<dt><code>findLeaf(x, tree, depth = 0)</code></dt><dd>
+<p>Find the leaf node where x is located. Return a list of node and its depth.
+</p>
+
+<ul>
+<li><p> x - A sample of x. <br />
+</p>
+</li>
+<li><p> tree - An ORT tree or node.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>gains(elem)</code></dt><dd>
+<p>Compute the entropy gain on all tests of the elem.
+</p>
+
+<ul>
+<li><p> elem - An <code>Elem</code> object.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>update(x, y)</code></dt><dd>
+<p>When a sample comes in current node, update ORT with the sample's x variables and y value. <br />
+</p>
+
+<ul>
+<li><p> x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+</p>
+</li>
+<li><p> y - The y value of a sample.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>generateTree(tree.mat, df.node, node.ind = 1)</code></dt><dd>
+<p>Generate a Tree from a tree matrix which just likes the result of <code>randomForest::getTree()</code>.<br />
+</p>
+
+<ul>
+<li><p> tree.mat - A tree matrix which can be obtained from <code>randomForest::getTree()</code>. Node that it must have a column named <strong>node.ind</strong>. See <strong>Examples</strong>. <br />
+</p>
+</li>
+<li><p> node.ind - The index of the current node in Tree. Default <code>1</code> for the root node. For most purposes, don't need to change it.
+</p>
+</li>
+<li><p> df.node - The training data frame used when constructing random forest,
+i.e., the <strong>data</strong> argument in <code>randomForest::randomForest()</code> function.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>predict(x)</code></dt><dd>
+<p>Predict the corresponding y value of x.
+</p>
+
+<ul>
+<li><p> x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>draw()</code></dt><dd><p>Draw the Tree.</p>
+</dd>
+<dt><code>...</code></dt><dd><p>Other methods can be seen in <code>Tree</code>.</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Quan Gu
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+if(!require(randomForest)) install.packages("randomForest")
+library(randomForest)
+
+# classifaction example
+dat1 &lt;- iris; dat1[,5] &lt;- as.integer(dat1[,5])
+rf &lt;- randomForest(factor(Species) ~ ., data = dat1)
+treemat1 &lt;- getTree(rf, 1, labelVar=F)
+treemat1 &lt;- cbind(treemat1, node.ind = 1:nrow(treemat1))
+x.rng1 &lt;- data.frame(min = apply(dat1[1:4], 2, min), 
+                     max = apply(dat1[1:4], 2, max), 
+                     row.names = paste0("X",1:4))
+param1 &lt;- list('minSamples'= 5, 'minGain'= 0.1, 'numClasses'= 3, 'x.rng'= x.rng1)
+ort1 &lt;- ORT$new(param1)
+ort1$generateTree(treemat1, df.node = dat1) # 23ms, 838KB
+ort1$draw()
+ort1$left$elem$tests[[1]]$statsL
+sapply(1:150, function(i) ort1$predict(dat1[i,1:4]))
+
+# first generate, then update
+ind.gen &lt;- sample(1:150,50) # for generate ORT
+ind.updt &lt;- setdiff(1:150, ind.gen) # for update ORT
+rf2 &lt;- randomForest(factor(Species) ~ ., data = dat1[ind.gen,])
+treemat2 &lt;- getTree(rf2, 22, labelVar=F)
+treemat2 &lt;- cbind(treemat2, node.ind = 1:nrow(treemat2))
+ort2 &lt;- ORT$new(param1)
+ort2$draw()
+ort2$generateTree(treemat2, df.node = dat1[ind.gen,])
+ort2$draw()
+for(i in ind.updt) {
+  ort2$update(dat1[i,1:4], dat1[i,5])
+}
+ort2$draw()
+
+
+# regression example
+if(!require(ggplot2)) install.packages("ggplot2")
+data("diamonds", package = "ggplot2")
+dat3 &lt;- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
+for (col in c("cut","color","clarity")) dat3[[col]] &lt;- as.integer(dat3[[col]])
+x.rng3 &lt;- data.frame(min = apply(dat3[1:9], 2, min),
+                     max = apply(dat3[1:9], 2, max),
+                     row.names = paste0("X", 1:9))
+param3 &lt;- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng3)
+ind.gen3 &lt;- sample(1:1000,500)
+ind.updt3 &lt;- setdiff(1:1000, ind.gen3)
+rf3 &lt;- randomForest(price ~ ., data=dat3[ind.gen3,], maxnodes=20)
+treemat3 &lt;- getTree(rf3, 33, labelVar=F)
+treemat3 &lt;- cbind(treemat3, node.ind = 1:nrow(treemat3))
+
+ort3 &lt;- ORT$new(param3)
+ort3$generateTree(treemat3, df.node = dat3[ind.gen3,])
+ort3$size()
+for (i in ind.updt3) {
+  ort3$update(dat3[i,1:9], dat3[i,10])
+}
+ort3$size()
+
+</pre>
+
+
+</body></html>
