@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Create a SuffStats Object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for SuffStats"><tr><td>SuffStats</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Create a SuffStats Object</h2>
+
+<h3>Description</h3>
+
+<p>SuffStats is a class of R6. It has provide some important statistics(fields or functions) inside the element of every (leaf) node in an ORT object.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+SuffStats$new(numClasses = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>numClasses</code></td>
+<td>
+<p>A nonnegative integer indicates how many classes when solve a classifation problem. Default 0 for regression. If numClasses &gt; 0, then do classifation.</p>
+</td></tr>
+</table>
+
+
+<h3>Format</h3>
+
+<p><code>R6Class</code> object.</p>
+
+
+<h3>Details</h3>
+
+<p>Note that SuffStats may only be seen in leaf nodes of an ORT tree. See details in description of each field or method.
+</p>
+
+
+<h3>Value</h3>
+
+<p>Object of <code>R6Class</code>, Object of SuffStats.
+</p>
+
+
+<h3>Fields</h3>
+
+
+<dl>
+<dt><code>(node.n)</code></dt><dd><p>Number of samples under current node. Default 0.</p>
+</dd>
+<dt><code>(classify)</code></dt><dd><p>TRUE for classification and FALSE for Regression.</p>
+</dd>
+<dt><code>(node.counts)</code></dt><dd><p>If classification, counts of each y value in current node.</p>
+</dd>
+<dt><code>(node.sum)</code></dt><dd><p>Sum of the y value in current node.</p>
+</dd>
+<dt><code>(node.square.sum)</code></dt><dd><p>Sum of the y's square in current node.</p>
+</dd>
+</dl>
+
+
+
+<h3>Methods</h3>
+
+
+<dl>
+<dt><code>update(y)</code></dt><dd>
+<p>When a sample comes in current node, update ORT with the sample's y value. <br />
+</p>
+
+<ul>
+<li><p> y - The y value of a sample.
+</p>
+</li></ul>
+
+</dd>
+<dt><code>reset()</code></dt><dd><p>Reset all fields to NULL. Currently not used.</p>
+</dd>
+<dt><code>isLeaf()</code></dt><dd><p>TRUE if current node is a leaf node otherwise FALSE.</p>
+</dd>
+<dt><code>pred()</code></dt><dd><p>Return the prediction of current leaf node. Will be an <strong>integer</strong> for classification or an <strong>numeric</strong> for regression.</p>
+</dd>
+<dt><code>impurity()</code></dt><dd><p>Return the impurity of current node. Computed via information entropy.</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Quan Gu
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# classification
+sa &lt;- SuffStats$new(numClasses = 3)
+sa$update(2);sa$update(1);sa$update(2)
+sa$pred()
+sa$node.counts
+sa$node.n
+sa$impurity()
+
+# Regression
+sb &lt;- SuffStats$new(numClasses = 0)
+sb$update(1);sb$update(2);sb$update(3)
+sb$pred()
+sb$node.sum;sb$node.square.sum
+sb$impurity()
+
+</pre>
+
+
+</body></html>

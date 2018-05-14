@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Create a Test Object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Test"><tr><td>Test</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Create a Test Object</h2>
+
+<h3>Description</h3>
+
+<p>Test is a class of R6. It is the candicate split of a node. Named by <em>Amir Saffari</em> 's paper.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Test$new(xvar.index, xvar.value, numClasses = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>xvar.index</code></td>
+<td>
+<p>A integer indicates which x variable is used to split.</p>
+</td></tr>
+<tr valign="top"><td><code>xvar.value</code></td>
+<td>
+<p>A numeric indicates what value of the chosen x variable is used to split. Means <code>x[xvar.index] &lt; xvar.value</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>numClasses</code></td>
+<td>
+<p>A nonnegative integer indicates how many classes when solve a classifation problem. Default 0 for regression. If numClasses &gt; 0, then do classifation.</p>
+</td></tr>
+</table>
+
+
+<h3>Format</h3>
+
+<p><code>R6Class</code> object.</p>
+
+
+<h3>Details</h3>
+
+<p>Note that Test may only be seen in leaf nodes of an ORT tree. See details in description of each field or method.
+</p>
+
+
+<h3>Value</h3>
+
+<p>Object of <code>R6Class</code>, Object of Test.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Quan Gu
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+t1 &lt;- Test$new(3, 2.2, 0)
+t1$update(c(0,0,2,4), 1.2)
+t1$update(c(0,0,1,4), 1.4)
+t1$update(c(1,1,3,3), 2.7)
+t1$statsL$pred()
+t1$statsR$pred()
+</pre>
+
+
+</body></html>
