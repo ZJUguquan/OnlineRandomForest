@@ -20,39 +20,6 @@
 #' @return Object of \code{\link{R6Class}}, Object of \code{Online Random Forest}.
 #' @format \code{\link{R6Class}} object. 
 #' 
-#' @import R6 randomForest
-#' @export
-#' 
-#' @examples
-#' # regression example
-#' if(!require(ggplot2)) install.packages("ggplot2")
-#' data("diamonds", package = "ggplot2")
-#' dat <- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
-#' for (col in c("cut","color","clarity")) dat[[col]] <- as.integer(dat[[col]])
-#' x.rng <- data.frame(min = apply(dat[1:9], 2, min),
-#'                     max = apply(dat[1:9], 2, max),
-#'                     row.names = paste0("X", 1:9))
-#' param <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng)
-#' ind.gen <- sample(1:1000, 800)
-#' ind.updt <- sample(setdiff(1:1000, ind.gen), 100)
-#' ind.test <- setdiff(setdiff(1:1000, ind.gen), ind.updt)
-#' rf <- randomForest(price ~ ., data = dat[ind.gen, ], maxnodes = 20, ntree = 100)
-#' orf <- ORF$new(param)
-#' orf$generateForest(rf, df.train = dat[ind.gen, ], y.col = "price")
-#' orf$meanTreeSize()
-#' for (i in ind.updt) {
-#'   orf$update(dat[i, 1:9], dat[i, 10])
-#' }
-#' orf$meanTreeSize()
-#' 
-#' if(!require(Metrics)) install.packages("Metrics")
-#' preds <- orf$predicts(dat[ind.test, 1:9])
-#' Metrics::rmse(preds, dat$price[ind.test])
-#' preds.rf <- predict(rf, newdata = dat[ind.test,])
-#' Metrics::rmse(preds.rf, dat$price[ind.test]) # make progress
-#' 
-#' # classification example
-#' # Just help yourself, boy !
 #'
 #' @section Fields:
 #' \describe{
@@ -74,8 +41,9 @@
 #'     Generate a list of ORT trees, call function \code{\link[=ORT]{ORT$generateTree()}} inside.\cr
 #'     \itemize{
 #'       \item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named **node.ind**. See **Examples**. \cr
-#'       \item df.train -  The training data frame which has been used to contruct randomForest,
-#'        i.e., the **data** argument in \code{\link[randomForest]{randomForest}} function.
+#'       \item df.train - The training data frame which has been used to contruct randomForest, i.e., the **data** argument in \code{\link[randomForest]{randomForest}} function. 
+#'                        Note that all columns in df.train must be **numeric** or **integer**.
+#'       \item y.col - A character indicates which column is y, i.e., the dependent variable. Note that y column must be the last column of df.train.
 #'     }
 #'   }
 #'   \item{\code{predict(x)}}{
@@ -105,6 +73,58 @@
 #'   \item{\code{sdTreeSize()}}{Standard deviation for leaf nodes numbers of ORT trees in the forest.}
 #'   \item{\code{sdTreeSize()}}{Standard deviation for depth of ORT trees in the forest.}
 #' }
+#'
+#'
+#' @examples
+#' # classifaction example
+#' dat <- iris; dat[,5] <- as.integer(dat[,5])
+#' x.rng <- dataRange(dat[1:4])
+#' param <- list('minSamples'= 2, 'minGain'= 0.2, 'numClasses'= 3, 'x.rng'= x.rng)
+#' ind.gen <- sample(1:150,30) # for generate ORF
+#' ind.updt <- sample(setdiff(1:150, ind.gen), 100) # for uodate ORF
+#' ind.test <- setdiff(setdiff(1:150, ind.gen), ind.updt) # for test
+#' rf <- randomForest::randomForest(factor(Species) ~ ., data = dat[ind.gen, ], maxnodes = 2, ntree = 100)
+#' orf <- ORF$new(param)
+#' orf$generateForest(rf, df.train = dat[ind.gen, ], y.col = "Species")
+#' orf$meanTreeSize()
+#' for (i in ind.updt) {
+#'   orf$update(dat[i, 1:4], dat[i, 5])
+#' }
+#' orf$meanTreeSize()
+#' orf$confusionMatrix(dat[ind.test, 1:4], dat[ind.test, 5], pretty = T)
+#' # compare
+#' table(predict(rf, newdata = dat[ind.test,]) == dat[ind.test, 5])
+#' table(orf$predicts(X = dat[ind.test,]) == dat[ind.test, 5])
+#'
+#'
+#' # regression example
+#' if(!require(ggplot2)) install.packages("ggplot2")
+#' data("diamonds", package = "ggplot2")
+#' dat <- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
+#' for (col in c("cut","color","clarity")) dat[[col]] <- as.integer(dat[[col]]) # Don't forget !
+#' x.rng <- dataRange(dat[1:9])
+#' param <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng)
+#' ind.gen <- sample(1:1000, 800)
+#' ind.updt <- sample(setdiff(1:1000, ind.gen), 100)
+#' ind.test <- setdiff(setdiff(1:1000, ind.gen), ind.updt)
+#' rf <- randomForest::randomForest(price ~ ., data = dat[ind.gen, ], maxnodes = 20, ntree = 100)
+#' orf <- ORF$new(param)
+#' orf$generateForest(rf, df.train = dat[ind.gen, ], y.col = "price")
+#' orf$meanTreeSize()
+#' for (i in ind.updt) {
+#'   orf$update(dat[i, 1:9], dat[i, 10])
+#' }
+#' orf$meanTreeSize()
+#' # compare
+#' if(!require(Metrics)) install.packages("Metrics")
+#' preds.rf <- predict(rf, newdata = dat[ind.test,])
+#' Metrics::rmse(preds.rf, dat$price[ind.test])
+#' preds <- orf$predicts(dat[ind.test, 1:9])
+#' Metrics::rmse(preds, dat$price[ind.test]) # make progress
+#'
+#'
+#' @import R6 randomForest
+#' @export
 
 ORF <- R6Class(
   classname = "Online Random Forest",
@@ -143,6 +163,10 @@ ORF <- R6Class(
         stop("You need install.packages('randomForest') first.")
       if (!identical(y.col, names(df.train)[ncol(df.train)]))
         stop("y.col must be the last column of df.train !")
+      if(self$classify) {
+        if (length(unique(.subset2(df.train, y.col))) > self$numClasses)
+            stop("Param numClasses is wrong !")
+      }
       if (!("randomForest" %in% class(rf)))
         stop("rf must be an object constructed by `randomForest::randomForest()` !")
       if (rf$forest$ntree != self$numTrees)

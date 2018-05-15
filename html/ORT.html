@@ -55,9 +55,9 @@ More details show in <strong>Fields</strong>.</p>
 <dl>
 <dt><code>age</code></dt><dd><p>How many times has the loop go through inside the <code>update()</code> function.</p>
 </dd>
-<dt><code>minSamples</code></dt><dd><p>A part of <code>param</code> indicates the minimal samples in a leaf node</p>
+<dt><code>minSamples</code></dt><dd><p>A part of <code>param</code> indicates the minimal samples in a leaf node. For classification, lower, for regression, higher.</p>
 </dd>
-<dt><code>minGain</code></dt><dd><p>A part of <code>param</code> indicates minimal entropy gain when split a node.</p>
+<dt><code>minGain</code></dt><dd><p>A part of <code>param</code> indicates minimal entropy gain when split a node. For classification, lower, for regression, higher.</p>
 </dd>
 <dt><code>numTests</code></dt><dd><p>A part of <code>param</code> indicates the number of <code>SuffStats</code> in tests. Default 10 if not set.</p>
 </dd>
@@ -131,8 +131,8 @@ You can generate it via <code>OnlineRandomForest::dataRange()</code> for conveni
 <li><p> node.ind - The index of the current node in Tree. Default <code>1</code> for the root node. For most purposes, don't need to change it.
 </p>
 </li>
-<li><p> df.node - The training data frame which has been used to contruct random forest.,
-i.e., the <strong>data</strong> argument in <code>randomForest</code> function.
+<li><p> df.node - The training data frame which has been used to contruct randomForest, i.e., the <strong>data</strong> argument in <code>randomForest</code> function.
+Note that all columns in df.node must be <strong>numeric</strong> ors <strong>integer</strong>.
 </p>
 </li></ul>
 
@@ -174,7 +174,7 @@ treemat1 &lt;- getTree(rf, 1, labelVar=F)
 treemat1 &lt;- cbind(treemat1, node.ind = 1:nrow(treemat1))
 x.rng1 &lt;- data.frame(min = apply(dat1[1:4], 2, min), 
                      max = apply(dat1[1:4], 2, max), 
-                     row.names = paste0("X",1:4))
+                     row.names = paste0("X",1:4)) # or use dataRange(dat1[1:4])
 param1 &lt;- list('minSamples'= 5, 'minGain'= 0.1, 'numClasses'= 3, 'x.rng'= x.rng1)
 ort1 &lt;- ORT$new(param1)
 ort1$generateTree(treemat1, df.node = dat1) # 23ms, 838KB
@@ -202,7 +202,7 @@ ort2$draw()
 if(!require(ggplot2)) install.packages("ggplot2")
 data("diamonds", package = "ggplot2")
 dat3 &lt;- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
-for (col in c("cut","color","clarity")) dat3[[col]] &lt;- as.integer(dat3[[col]])
+for (col in c("cut","color","clarity")) dat3[[col]] &lt;- as.integer(dat3[[col]]) # Don't forget !
 x.rng3 &lt;- data.frame(min = apply(dat3[1:9], 2, min),
                      max = apply(dat3[1:9], 2, max),
                      row.names = paste0("X", 1:9))
@@ -220,6 +220,7 @@ for (i in ind.updt3) {
   ort3$update(dat3[i,1:9], dat3[i,10])
 }
 ort3$size()
+
 
 </pre>
 

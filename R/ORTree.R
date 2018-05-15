@@ -185,7 +185,7 @@ Test <- R6Class(
 #' @param numSamplesSeen A integer indicates how many samples have come in current node for updating the ORT tree. Default 0.
 #' 
 #' @details See details in description of each field or method.
-#' @return Object of \code{\link{R6Class}}, Object of \code{Tree Element}.
+#' @return Object of \code{\link{R6Class}}, Object of \code{Node Element}.
 #' @format \code{\link{R6Class}} object.
 #' 
 #' @import R6
@@ -229,7 +229,7 @@ Test <- R6Class(
 #'   \item{\code{updateSplit(xvar.index, xvar.value)}}{
 #'     Replace the fields **splitInd** and **splitVal** of current node with xvar.index and xvar.value.
 #'   }
-#'   \item{...}{Other functions.}
+#'   \item{...}{Other functions, usually not used.}
 #' }
 
 Elem <- R6Class(
@@ -287,32 +287,6 @@ Elem <- R6Class(
 
 
 
-# dataRange -------------------------
-
-#' @title dataRange function
-#' @description Return the range of X for each variable.
-#' @author Quan Gu
-#' 
-#' @usage dataRange(X)
-#' @param X A matrix or a data frame of training data **without** y column.
-#' 
-#' @details Return the range of X for each variable, which is a part of \code{param}. Can be used for passing \code{param} to \code{Elem, ORT or ORF}.
-#' @return A data frame with two columns \code{min max} contains the range of each x variable.
-#' 
-#' @examples
-#' dataRange(iris[, 1:4])
-#' dataRange(mtcars)
-
-dataRange <- function(X) {
-  stopifnot(is.matrix(X) | is.data.frame(X))
-  data.frame(min = apply(X, 2, min),
-             max = apply(X, 2, max),
-             row.names = paste0("X", 1:ncol(X)))
-}
-
-
-
-
 # ORT -----------------------
 
 #' @title Create a Online Random Tree Object 
@@ -342,7 +316,7 @@ dataRange <- function(X) {
 #' treemat1 <- cbind(treemat1, node.ind = 1:nrow(treemat1))
 #' x.rng1 <- data.frame(min = apply(dat1[1:4], 2, min), 
 #'                      max = apply(dat1[1:4], 2, max), 
-#'                      row.names = paste0("X",1:4))
+#'                      row.names = paste0("X",1:4)) # or use dataRange(dat1[1:4])
 #' param1 <- list('minSamples'= 5, 'minGain'= 0.1, 'numClasses'= 3, 'x.rng'= x.rng1)
 #' ort1 <- ORT$new(param1)
 #' ort1$generateTree(treemat1, df.node = dat1) # 23ms, 838KB
@@ -370,7 +344,7 @@ dataRange <- function(X) {
 #' if(!require(ggplot2)) install.packages("ggplot2")
 #' data("diamonds", package = "ggplot2")
 #' dat3 <- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
-#' for (col in c("cut","color","clarity")) dat3[[col]] <- as.integer(dat3[[col]])
+#' for (col in c("cut","color","clarity")) dat3[[col]] <- as.integer(dat3[[col]]) # Don't forget !
 #' x.rng3 <- data.frame(min = apply(dat3[1:9], 2, min),
 #'                      max = apply(dat3[1:9], 2, max),
 #'                      row.names = paste0("X", 1:9))
@@ -389,11 +363,12 @@ dataRange <- function(X) {
 #' }
 #' ort3$size()
 #' 
+#'
 #' @section Fields:
 #' \describe{
 #'   \item{\code{age}}{How many times has the loop go through inside the \code{update()} function.}
-#'   \item{\code{minSamples}}{A part of \code{param} indicates the minimal samples in a leaf node}
-#'   \item{\code{minGain}}{A part of \code{param} indicates minimal entropy gain when split a node.}
+#'   \item{\code{minSamples}}{A part of \code{param} indicates the minimal samples in a leaf node. For classification, lower, for regression, higher.}
+#'   \item{\code{minGain}}{A part of \code{param} indicates minimal entropy gain when split a node. For classification, lower, for regression, higher.}
 #'   \item{\code{numTests}}{A part of \code{param} indicates the number of \code{SuffStats} in tests. Default 10 if not set.}
 #'   \item{\code{maxDepth}}{A part of \code{param} indicates max depth of an ORT tree. Default 10 if not set.}
 #'   \item{\code{numClasses}}{A nonnegative integer indicates how many classes when solve a classifation problem. Default 0 for regression. If numClasses > 0, then do classifation.}
@@ -434,8 +409,8 @@ dataRange <- function(X) {
 #'     \itemize{
 #'       \item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named **node.ind**. See **Examples**. \cr
 #'       \item node.ind - The index of the current node in Tree. Default \code{1} for the root node. For most purposes, don't need to change it.
-#'       \item df.node - The training data frame which has been used to contruct random forest.,
-#'        i.e., the **data** argument in \code{\link[randomForest]{randomForest}} function.
+#'       \item df.node - The training data frame which has been used to contruct randomForest, i.e., the **data** argument in \code{\link[randomForest]{randomForest}} function. 
+#'                       Note that all columns in df.node must be **numeric** ors **integer**.
 #'     }
 #'   }
 #'   \item{\code{predict(x)}}{

@@ -18,7 +18,7 @@ Elem$new(param, splitInd = -1, splitVal = 0, numSamplesSeen = 0)
 \item{numSamplesSeen}{A integer indicates how many samples have come in current node for updating the ORT tree. Default 0.}
 }
 \value{
-Object of \code{\link{R6Class}}, Object of \code{Tree Element}.
+Object of \code{\link{R6Class}}, Object of \code{Node Element}.
 }
 \description{
 Elem is a class of R6. It is the element of a node in a Tree or ORT object, storing some important information of the node/Tree.
@@ -57,7 +57,7 @@ When a sample comes in current node, update ORT with the sample's x variables an
 \item{\code{updateSplit(xvar.index, xvar.value)}}{
 Replace the fields \strong{splitInd} and \strong{splitVal} of current node with xvar.index and xvar.value.
 }
-\item{...}{Other functions.}
+\item{...}{Other functions, usually not used.}
 }
 }
 
