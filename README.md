@@ -1,10 +1,10 @@
 Introduction
-------------
+============
 
 Online Random Forest(ORF) was first introduced by [Amir Saffari, etc](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.150.1671&rep=rep1&type=pdf). After that, [Arthur Lui](https://github.com/luiarthur/ORFpy) has implemented the algorithm using Python. Many thanks for their work. Following the paper's idea and Lui's implemention, I refactor the code via R and R6 package. In additon, the implemention of ORF in this package, which is in combination with [randomForest](https://cran.r-project.org/web/packages/randomForest/), make it support both incremental learning and batch learning, i.e., construct trees based on randomForest, then update them via ORF. In this way, it will be much faster than before.
 
 Install
--------
+=======
 
 ``` r
 if(!require(devtools)) install.packages("devtools")
@@ -12,9 +12,9 @@ devtools::install_github("ZJUguquan/OnlineRandomForest")
 ```
 
 Quick Start
------------
+===========
 
-### Minimal example: incremental learning
+### 1. Minimal example: incremental learning
 
 ``` r
 library(OnlineRandomForest)
@@ -38,7 +38,7 @@ orf$forest[[1]]$draw()
     ##           |----R: Leaf 1 
     ##      |----R: Leaf 3 
 
-### Classifaction example
+### 2. Classifaction example
 
 ``` r
 library(OnlineRandomForest)
@@ -123,7 +123,7 @@ table(orf$predicts(X = dat[ind.test,]) == dat[ind.test, 5])
     ## FALSE  TRUE 
     ##     2    18
 
-### Regression example
+### 3. Regression example
 
 ``` r
 # data preparation
@@ -177,9 +177,9 @@ Metrics::rmse(preds, dat$price[ind.test]) # make progress
 <br/>
 
 Other use
----------
+=========
 
--   the **Tree** Class
+1.  the **Tree** Class
 
     ``` r
     ta <- Tree$new("abc", NULL, NULL)
@@ -195,7 +195,7 @@ tc$right$right$updateChildren(Tree$new("666"), Tree$new(999))
 tc$draw()
 ```
 
--   generate a **Online random Tree** from randomForest package, then update it
+1.  generate a **Online random Tree** from randomForest package, then update it
 
 ``` r
 # data preparation
@@ -251,7 +251,8 @@ ort2$draw()
     ##                |----R: Leaf 1 
     ##           |----R: Leaf 3 
 
-### More details see in help document
+More details see in help document
+=================================
 
 ``` r
 help("ORF")
