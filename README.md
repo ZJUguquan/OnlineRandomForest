@@ -14,16 +14,13 @@ devtools::install_github("ZJUguquan/OnlineRandomForest")
 Quick Start
 -----------
 
-### Online Random Forest
-
--   Minimal example: incremental learning
+### Minimal example: incremental learning
 
 ``` r
 library(OnlineRandomForest)
-param <- list('minSamples'= 2, 'minGain'= 0.2, 'numClasses'= 3, 'x.rng'= dataRange(iris[1:4]))
+param <- list('minSamples'= 1, 'minGain'= 0.1, 'numClasses'= 3, 'x.rng'= dataRange(iris[1:4]))
 orf <- ORF$new(param, numTrees = 10)
-for (i in sample(1:150,30)) orf$update(iris[i, 1:4], as.integer(iris[i, 5]))
-
+for (i in 1:150) orf$update(iris[i, 1:4], as.integer(iris[i, 5]))
 orf$meanTreeDepth()
 ```
 
@@ -33,13 +30,15 @@ orf$meanTreeDepth()
 orf$forest[[1]]$draw()
 ```
 
-    ## Note: if condition satisfied, go L(Left), otherwise R(Right).
-    ## 
-    ## Root X3 < 2.9 
+    ## Root X3 < 2.79 
     ## |----L: Leaf 1 
-    ## |----R: Leaf 3 
+    ## |----R: X3 < 5.26 
+    ##      |----L: X3 < 6.22 
+    ##           |----L: Leaf 3 
+    ##           |----R: Leaf 1 
+    ##      |----R: Leaf 3 
 
--   Classifaction example
+### Classifaction example
 
 ``` r
 library(OnlineRandomForest)
@@ -114,7 +113,6 @@ orf$confusionMatrix(dat[ind.test, 1:4], dat[ind.test, 5], pretty = T)
 table(predict(rf, newdata = dat[ind.test,]) == dat[ind.test, 5])
 ```
 
-    ## 
     ## FALSE  TRUE 
     ##     9    11
 
@@ -122,24 +120,23 @@ table(predict(rf, newdata = dat[ind.test,]) == dat[ind.test, 5])
 table(orf$predicts(X = dat[ind.test,]) == dat[ind.test, 5])
 ```
 
-    ## 
     ## FALSE  TRUE 
     ##     2    18
 
--   Regression example
+### Regression example
 
-    ``` r
-    # data preparation
-    if(!require(ggplot2)) install.packages("ggplot2")
-    data("diamonds", package = "ggplot2")
-    dat <- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
-    for (col in c("cut","color","clarity")) dat[[col]] <- as.integer(dat[[col]]) # Don't forget this
-    x.rng <- dataRange(dat[1:9])
-    param <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng)
-    ind.gen <- sample(1:1000, 800)
-    ind.updt <- sample(setdiff(1:1000, ind.gen), 100)
-    ind.test <- setdiff(setdiff(1:1000, ind.gen), ind.updt)
-    ```
+``` r
+# data preparation
+if(!require(ggplot2)) install.packages("ggplot2")
+data("diamonds", package = "ggplot2")
+dat <- as.data.frame(diamonds[sample(1:53000,1000), c(1:6,8:10,7)])
+for (col in c("cut","color","clarity")) dat[[col]] <- as.integer(dat[[col]]) # Don't forget this
+x.rng <- dataRange(dat[1:9])
+param <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng)
+ind.gen <- sample(1:1000, 800)
+ind.updt <- sample(setdiff(1:1000, ind.gen), 100)
+ind.test <- setdiff(setdiff(1:1000, ind.gen), ind.updt)
+```
 
 ``` r
 # construct ORF 
@@ -177,7 +174,10 @@ Metrics::rmse(preds, dat$price[ind.test]) # make progress
 
     ## [1] 869.9613
 
-### Other use
+<br/>
+
+Other use
+---------
 
 -   the **Tree** Class
 
