@@ -27,16 +27,18 @@ orf$meanTreeDepth()
     ## [1] 3
 
 ``` r
-orf$forest[[1]]$draw()
+orf$forest[[2]]$draw()
 ```
 
-    ## Root X3 < 2.79 
-    ## |----L: Leaf 1 
-    ## |----R: X3 < 5.26 
-    ##      |----L: X3 < 6.22 
+    ## Root X4 < 1.21 
+    ## |----L: X3 < 2.38 
+    ##      |----L: Leaf 1 
+    ##      |----R: Leaf 2 
+    ## |----R: X4 < 2.15 
+    ##      |----L: X1 < 4.92 
     ##           |----L: Leaf 3 
-    ##           |----R: Leaf 1 
-    ##      |----R: Leaf 3 
+    ##           |----R: Leaf 3 
+    ##      |----R: Leaf 3
 
 ### 2. Classifaction example
 
@@ -181,12 +183,12 @@ Other use
 
 1.  the **Tree** Class
 
-    ``` r
-    ta <- Tree$new("abc", NULL, NULL)
-    tb <- Tree$new(1, Tree$new(36), Tree$new(3))
-    tc <- Tree$new(89, tb, ta)
-    tc$draw()
-    ```
+``` r
+ta <- Tree$new("abc", NULL, NULL)
+tb <- Tree$new(1, Tree$new(36), Tree$new(3))
+tc <- Tree$new(89, tb, ta)
+tc$draw()
+```
 
 ``` r
 # update tc
