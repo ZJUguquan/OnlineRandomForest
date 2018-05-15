@@ -128,6 +128,7 @@
 
 ORF <- R6Class(
   classname = "Online Random Forest",
+  cloneable = FALSE, portable = FALSE, class = FALSE,,
   public = list(
     param = NULL, numClasses = NULL, classify = NULL,
     numTrees = NULL, forest = NULL, # ncores = NULL,

@@ -131,8 +131,8 @@ x.rng3 <- data.frame(min = apply(dat3[1:9], 2, min),
 param3 <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng3)
 ind.gen3 <- sample(1:1000,500)
 ind.updt3 <- setdiff(1:1000, ind.gen3)
-rf3 <- randomForest(price ~ ., data=dat3[ind.gen3,], maxnodes=20)
-treemat3 <- getTree(rf3, 33, labelVar=F)
+rf3 <- randomForest(price ~ ., data = dat3[ind.gen3,], maxnodes = 20)
+treemat3 <- getTree(rf3, 33, labelVar = F)
 treemat3 <- cbind(treemat3, node.ind = 1:nrow(treemat3))
 
 ort3 <- ORT$new(param3)

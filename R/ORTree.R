@@ -56,6 +56,7 @@
 
 SuffStats <- R6Class(
   classname = "SuffStats",
+  cloneable = FALSE, portable = FALSE, class = FALSE,,
   public = list(
     eps = 1e-10, node.n = 0, classify = NULL,
     node.counts = NULL, node.sum = NULL, node.square.sum = NULL,
@@ -150,6 +151,7 @@ SuffStats <- R6Class(
    
 Test <- R6Class(
   classname = "Candidate Split",
+  cloneable = FALSE, portable = FALSE, class = FALSE,,
   public = list(
     classify = NULL, xvar.index = NULL, xvar.value = NULL,
     statsL = NULL, statsR = NULL,
@@ -234,6 +236,7 @@ Test <- R6Class(
 
 Elem <- R6Class(
   classname = "Node Element",
+  cloneable = FALSE, portable = FALSE, class = FALSE,,
   public = list(
     x.rng = NULL, x.dim = NULL, splitInd = NULL, splitVal = NULL,
     numClasses = NULL, numTests = NULL, numSamplesSeen = NULL,
@@ -351,8 +354,8 @@ Elem <- R6Class(
 #' param3 <- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng3)
 #' ind.gen3 <- sample(1:1000,500)
 #' ind.updt3 <- setdiff(1:1000, ind.gen3)
-#' rf3 <- randomForest(price ~ ., data=dat3[ind.gen3,], maxnodes=20)
-#' treemat3 <- getTree(rf3, 33, labelVar=F)
+#' rf3 <- randomForest(price ~ ., data = dat3[ind.gen3,], maxnodes = 20)
+#' treemat3 <- getTree(rf3, 33, labelVar = F)
 #' treemat3 <- cbind(treemat3, node.ind = 1:nrow(treemat3))
 #' 
 #' ort3 <- ORT$new(param3)
@@ -425,6 +428,7 @@ Elem <- R6Class(
 
 ORT <- R6Class(
   classname = "Online Random Tree",
+  cloneable = FALSE, portable = FALSE, class = FALSE,,
   inherit = Tree,
   public = list(
     param = NULL, age = 0, minSamples = NULL, minGain = NULL,

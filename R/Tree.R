@@ -72,6 +72,7 @@
 
 Tree <- R6Class(
   classname = "Tree",
+  cloneable = FALSE, portable = FALSE, class = FALSE,,
   public = list(
     elem = NULL, left = NULL, right = NULL, node.ind = NULL,
     initialize = function(elem = NULL, left = NULL, right = NULL, node.ind = 1) {

@@ -11,7 +11,7 @@ LazyData: TRUE
 RoxygenNote: 6.0.1
 Depends: R (>= 3.2.2)
 Imports: R6
-Suggests: randomForest, gmodels
+Suggests: randomForest, gmodels, ggplot2
 NeedsCompilation: no
 Packaged: 2018-05-13 10:54:51 UTC; Quan Gu
 Repository: CRAN

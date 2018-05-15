@@ -209,8 +209,8 @@ x.rng3 &lt;- data.frame(min = apply(dat3[1:9], 2, min),
 param3 &lt;- list('minSamples'= 10, 'minGain'= 1, 'maxDepth' = 10, 'x.rng'= x.rng3)
 ind.gen3 &lt;- sample(1:1000,500)
 ind.updt3 &lt;- setdiff(1:1000, ind.gen3)
-rf3 &lt;- randomForest(price ~ ., data=dat3[ind.gen3,], maxnodes=20)
-treemat3 &lt;- getTree(rf3, 33, labelVar=F)
+rf3 &lt;- randomForest(price ~ ., data = dat3[ind.gen3,], maxnodes = 20)
+treemat3 &lt;- getTree(rf3, 33, labelVar = F)
 treemat3 &lt;- cbind(treemat3, node.ind = 1:nrow(treemat3))
 
 ort3 &lt;- ORT$new(param3)
