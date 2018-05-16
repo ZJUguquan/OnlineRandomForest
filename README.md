@@ -21,11 +21,11 @@ library(OnlineRandomForest)
 param <- list('minSamples'= 1, 'minGain'= 0.1, 'numClasses'= 3, 'x.rng'= dataRange(iris[1:4]))
 orf <- ORF$new(param, numTrees = 10)
 for (i in 1:150) orf$update(iris[i, 1:4], as.integer(iris[i, 5]))
-cat("Mean depth of trees in the forest is:", orf$meanTreeDepth())
+cat("Mean depth of trees in the forest is:", orf$meanTreeDepth(), "\n")
 orf$forest[[2]]$draw()
 ```
 
-    ## [1] Mean depth of trees in the forest is: 3
+    ## Mean depth of trees in the forest is: 3
 
     ## Root X4 < 1.21 
     ## |----L: X3 < 2.38 
@@ -54,19 +54,19 @@ ind.test <- setdiff(setdiff(1:150, ind.gen), ind.updt) # for test
 rf <- randomForest::randomForest(factor(Species) ~ ., data = dat[ind.gen, ], maxnodes = 2, ntree = 100)
 orf <- ORF$new(param)
 orf$generateForest(rf, df.train = dat[ind.gen, ], y.col = "Species")
-cat("Mean size of trees in the forest is:", orf$meanTreeSize())
+cat("Mean size of trees in the forest is:", orf$meanTreeSize(), "\n")
 ```
 
-    ## [1] Mean size of trees in the forest is: 3
+    ## Mean size of trees in the forest is: 3
 
 ``` r
 for (i in ind.updt) {
   orf$update(dat[i, 1:4], dat[i, 5])
 }
-cat("After update, mean size of trees in the forest is:", orf$meanTreeSize())
+cat("After update, mean size of trees in the forest is:", orf$meanTreeSize(), "\n")
 ```
 
-    ## [1] After update, mean size of trees in the forest is: 11.9
+    ## After update, mean size of trees in the forest is: 11.9
 
 ``` r
 # predict
