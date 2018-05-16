@@ -56,7 +56,7 @@
 
 SuffStats <- R6Class(
   classname = "SuffStats",
-  cloneable = FALSE, portable = FALSE, class = FALSE,,
+  cloneable = FALSE, portable = FALSE, class = FALSE,
   public = list(
     eps = 1e-10, node.n = 0, classify = NULL,
     node.counts = NULL, node.sum = NULL, node.square.sum = NULL,
@@ -151,7 +151,7 @@ SuffStats <- R6Class(
    
 Test <- R6Class(
   classname = "Candidate Split",
-  cloneable = FALSE, portable = FALSE, class = FALSE,,
+  cloneable = FALSE, portable = FALSE, class = FALSE,
   public = list(
     classify = NULL, xvar.index = NULL, xvar.value = NULL,
     statsL = NULL, statsR = NULL,
@@ -236,7 +236,7 @@ Test <- R6Class(
 
 Elem <- R6Class(
   classname = "Node Element",
-  cloneable = FALSE, portable = FALSE, class = FALSE,,
+  cloneable = FALSE, portable = FALSE, class = FALSE,
   public = list(
     x.rng = NULL, x.dim = NULL, splitInd = NULL, splitVal = NULL,
     numClasses = NULL, numTests = NULL, numSamplesSeen = NULL,
@@ -428,7 +428,7 @@ Elem <- R6Class(
 
 ORT <- R6Class(
   classname = "Online Random Tree",
-  cloneable = FALSE, portable = FALSE, class = FALSE,,
+  cloneable = FALSE, portable = FALSE, class = FALSE,
   inherit = Tree,
   public = list(
     param = NULL, age = 0, minSamples = NULL, minGain = NULL,
