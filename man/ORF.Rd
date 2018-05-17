@@ -51,22 +51,24 @@ When a sample comes in, update all ORT trees in forest with the sample's x varia
 \item{\code{generateForest(rf, df.train, y.col)}}{
 Generate a list of ORT trees, call function \code{\link[=ORT]{ORT$generateTree()}} inside.\cr
 \itemize{
-\item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named \strong{node.ind}. See \strong{Examples}. \cr
+\item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named \strong{node.ind}. See \strong{Examples}.
 \item df.train - The training data frame which has been used to contruct randomForest, i.e., the \strong{data} argument in \code{\link[randomForest]{randomForest}} function.
 Note that all columns in df.train must be \strong{numeric} or \strong{integer}.
 \item y.col - A character indicates which column is y, i.e., the dependent variable. Note that y column must be the last column of df.train.
 }
 }
-\item{\code{predict(x)}}{
+\item{\code{predict(x, type = c("class", "prob"))}}{
 Predict the corresponding y value of x, using all ORT trees.
 \itemize{
 \item x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+\item type - For classification only, \strong{class} means to predict y class for x, and \strong{prob} means to preict probabilities of each class that x belongs to.
 }
 }
-\item{\code{predicts(X)}}{
-Predict the corresponding y value of x, using all ORT trees.
+\item{\code{predicts(X, type = c("class", "prob"))}}{
+Predict the corresponding y value for a batch of x, using all ORT trees.
 \itemize{
 \item X - A matrix or a data frame corresponding to a batch of samples' x variables.
+\item type - For classification only, \strong{class} means to predict y class for x, and \strong{prob} means to preict probabilities of each class that x belongs to.
 }
 }
 \item{\code{confusionMatrix(X, y, pretty = FALSE)}}{

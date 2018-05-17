@@ -40,22 +40,24 @@
 #'   \item{\code{generateForest(rf, df.train, y.col)}}{
 #'     Generate a list of ORT trees, call function \code{\link[=ORT]{ORT$generateTree()}} inside.\cr
 #'     \itemize{
-#'       \item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named **node.ind**. See **Examples**. \cr
+#'       \item tree.mat - A tree matrix which can be obtained from \code{randomForest::getTree()}. Node that it must have a column named **node.ind**. See **Examples**. 
 #'       \item df.train - The training data frame which has been used to contruct randomForest, i.e., the **data** argument in \code{\link[randomForest]{randomForest}} function. 
 #'                        Note that all columns in df.train must be **numeric** or **integer**.
 #'       \item y.col - A character indicates which column is y, i.e., the dependent variable. Note that y column must be the last column of df.train.
 #'     }
 #'   }
-#'   \item{\code{predict(x)}}{
+#'   \item{\code{predict(x, type = c("class", "prob"))}}{
 #'     Predict the corresponding y value of x, using all ORT trees.
 #'     \itemize{
 #'       \item x - The x variables of a sample. Note it is an numeric vector other than a scalar.
+#'       \item type - For classification only, **class** means to predict y class for x, and **prob** means to preict probabilities of each class that x belongs to.
 #'     }
 #'   }
-#'   \item{\code{predicts(X)}}{
-#'     Predict the corresponding y value of x, using all ORT trees.
+#'   \item{\code{predicts(X, type = c("class", "prob"))}}{
+#'     Predict the corresponding y value for a batch of x, using all ORT trees.
 #'     \itemize{
 #'       \item X - A matrix or a data frame corresponding to a batch of samples' x variables. 
+#'       \item type - For classification only, **class** means to predict y class for x, and **prob** means to preict probabilities of each class that x belongs to.
 #'     }
 #'   }
 #'   \item{\code{confusionMatrix(X, y, pretty = FALSE)}}{
@@ -196,18 +198,41 @@ ORF <- R6Class(
         })
       }
     },
-    predict = function(x) {
+    predict = function(x, type = c("class", "prob"), check.args = FALSE) {
+      if (check.args) {
+        stopifnot(is.numeric(x))
+        type <- match.arg(type)
+      } else {
+        type <- type[1]
+      }
       preds <- unlist(sapply(self$forest, function(ort) ort$predict(x), USE.NAMES = F))
       if (self$classify) {
         pred.counts <- table(preds)
-        return(as.integer(names(pred.counts)[which.max(pred.counts)]))
+        if (type == "prob") {
+          pred.probs <- pred.counts / length(preds)
+          if (length(pred.counts) < self$numClasses) {
+            add.class <- setdiff(as.character(seq_len(self$numClasses)), names(pred.counts))
+            add.probs <- rep(0, length(add.class))
+            names(add.probs) <- add.class
+            pred.probs <- c(pred.probs, add.probs)
+            pred.probs <- pred.probs[order(names(pred.probs))]
+          }
+          return(pred.probs)
+        } else {
+          return(as.integer(names(pred.counts)[which.max(pred.counts)]))
+        }
       } else {
         return(mean(preds))
       }
     },
-    predicts = function(X) {
+    predicts = function(X, type = c("class", "prob")) {
       stopifnot(is.matrix(X) | is.data.frame(X))
-      apply(X, 1, self$predict)
+      type <- match.arg(type)
+      if ((self$classify) & (type == "prob")) {
+        return(t(apply(X, 1, self$predict, type = type)))
+      } else {
+        return(apply(X, 1, self$predict, type = type))
+      }
     },
     predStat = function() { "TODO Later" },
     meanTreeSize = function() {
@@ -261,6 +286,6 @@ ORF <- R6Class(
 # 1. node.counts
 # 2. OOBE, rpart to ORT
 # 3. parallel
-# 
+# 4. prob √
 # 
 # 

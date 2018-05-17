@@ -94,7 +94,7 @@ For usage, see details in description of each field or method.
 </p>
 
 <ul>
-<li><p> tree.mat - A tree matrix which can be obtained from <code>randomForest::getTree()</code>. Node that it must have a column named <strong>node.ind</strong>. See <strong>Examples</strong>. <br />
+<li><p> tree.mat - A tree matrix which can be obtained from <code>randomForest::getTree()</code>. Node that it must have a column named <strong>node.ind</strong>. See <strong>Examples</strong>.
 </p>
 </li>
 <li><p> df.train - The training data frame which has been used to contruct randomForest, i.e., the <strong>data</strong> argument in <code>randomForest</code> function.
@@ -106,22 +106,28 @@ Note that all columns in df.train must be <strong>numeric</strong> or <strong>in
 </li></ul>
 
 </dd>
-<dt><code>predict(x)</code></dt><dd>
+<dt><code>predict(x, type = c("class", "prob"))</code></dt><dd>
 <p>Predict the corresponding y value of x, using all ORT trees.
 </p>
 
 <ul>
 <li><p> x - The x variables of a sample. Note it is an numeric vector other than a scalar.
 </p>
+</li>
+<li><p> type - For classification only, <strong>class</strong> means to predict y class for x, and <strong>prob</strong> means to preict probabilities of each class that x belongs to.
+</p>
 </li></ul>
 
 </dd>
-<dt><code>predicts(X)</code></dt><dd>
-<p>Predict the corresponding y value of x, using all ORT trees.
+<dt><code>predicts(X, type = c("class", "prob"))</code></dt><dd>
+<p>Predict the corresponding y value for a batch of x, using all ORT trees.
 </p>
 
 <ul>
 <li><p> X - A matrix or a data frame corresponding to a batch of samples' x variables.
+</p>
+</li>
+<li><p> type - For classification only, <strong>class</strong> means to predict y class for x, and <strong>prob</strong> means to preict probabilities of each class that x belongs to.
 </p>
 </li></ul>
 
