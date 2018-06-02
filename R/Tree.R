@@ -77,7 +77,7 @@ Tree <- R6Class(
     elem = NULL, left = NULL, right = NULL, node.ind = NULL,
     initialize = function(elem = NULL, left = NULL, right = NULL, node.ind = 1) {
       stopifnot((is.null(left) & is.null(right)) | 
-                 sum(c(class(left), class(right)) == "Tree") == 2)
+                 sum(c(class(left), class(right)) %in% c("Tree", "environment")) == 2)
       self$elem <- elem
       self$left <- left
       self$right <- right
