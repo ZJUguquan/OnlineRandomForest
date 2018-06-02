@@ -286,6 +286,6 @@ ORF <- R6Class(
 # 1. node.counts
 # 2. OOBE, rpart to ORT
 # 3. parallel
-# 4. prob √
+# 4. prob (Done !)
 # 
 # 

@@ -9,7 +9,7 @@ Description: This package is written for the implemention of Online Random Fores
 License: GPL-3
 LazyData: TRUE
 RoxygenNote: 6.0.1
-Depends: R (>= 3.2.2)
+Depends: R (>= 3.2.2), randomForest
 Imports: R6
 Suggests: randomForest, gmodels, ggplot2
 NeedsCompilation: no
